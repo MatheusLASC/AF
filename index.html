@@ -85,30 +85,23 @@
         var createScene = function () {
 
             // Create the scene space
-            var scene = new BABYLON.Scene(engine);
+            var scene = new BABYLON.Scene(engine);       
 
-            // Add a camera to the scene and attach it to the canvas
-            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, BABYLON.Vector3.Zero(), scene);
-            camera.setPosition(new BABYLON.Vector3(0, 0, -15));
-            camera.attachControl(canvas, true);
+          //  mesh2 = new MyMesh(colors[0]);
+           // mesh2.root.position.x = 0;
+           // meshes.push(mesh2);
 
+           createLights();
+           createMesaBilhar();
 
-            //lights
-            var light = new BABYLON.PointLight("light", new BABYLON.Vector3(0, 0, -10), scene);
-            var light = new BABYLON.PointLight("light", new BABYLON.Vector3(0, 0, 10), scene);
-
-            mesh2 = new MyMesh(0, colors[0]);
-            mesh2.root.position.x = 0;
-            meshes.push(mesh2);
-
-
+          
             //Animations
             var renderLoop = function () {
                 scene.render();
 
-                meshes.forEach(function (mesh) {
-                    mesh.rotacao();
-                });
+                 //  meshes.forEach(function (mesh) {
+                 //  mesh.rotacao();
+              //  });
             };
             engine.runRenderLoop(renderLoop);
 
@@ -117,28 +110,70 @@
 
         }
 
+        function createMesaBilhar() {
+            var MesaMaterial = new BABYLON.StandardMaterial("floor", scene);
+            MesaMaterial.diffuseTexture = new BABYLON.Texture("textures/solo.jpg", scene);
+         
+            var myMesa = BABYLON.MeshBuilder.CreateGround("myGround", { width: 14, height: 6, subdivisions: 1 }, scene);
+            myMesa.material = MesaMaterial;
+
+            // Add a camera to the scene and attach it to the canvas
+            var camera = new BABYLON.FreeCamera("FreeCam", new BABYLON.Vector3(0, 12, 0), scene);
+            camera.attachControl(canvas, true);
+            camera.lockedTarget = myMesa;
+
+            /*
+            var bricksMaterial = new BABYLON.StandardMaterial("brick", scene);
+            bricksMaterial.diffuseTexture = new BABYLON.Texture("textures/bricks.jpg", scene);
+            bricksMaterial.diffuseTexture.uScale = 8;
+            bricksMaterial.diffuseTexture.vScale = 0.5;
+
+            var wallLeft = BABYLON.MeshBuilder.CreateBox("wall", { width: 0.5, depth: 8, height: 0.5 }, scene);
+            wallLeft.material = bricksMaterial;
+            wallLeft.position.x = 4.25;
+
+            var wallRight = wallLeft.clone();
+            wallRight.position.x = -4.25;
+
+            var wallTop = wallLeft.clone();
+            wallTop.position.x = 0;
+            wallTop.rotation.y = Math.PI / 2;
+            wallTop.position.z = -4.25;
+
+            var wallTop = wallTop.clone();
+            wallTop.position.z = 4.25;
+
+            */
+        }
+
+        function createLights() {
+            var light1 = new BABYLON.PointLight("light", new BABYLON.Vector3(18, 4, 0), scene);
+            var light2 = new BABYLON.PointLight("light", new BABYLON.Vector3(-18, 4, 0), scene);
+        }
+
+
         class MyMesh {
-            constructor(raio, color) {
+            constructor(color) {
                 var material = new BABYLON.StandardMaterial("myMaterial", scene);
                 material.diffuseColor = color;
 
                 var sph = BABYLON.MeshBuilder.CreateSphere("sph", {}, scene);
                 sph.material = material;
-                sph.position.x = raio;
                 
                 this.myMesh = new BABYLON.Mesh("mesh", scene);
                 this.myMesh.addChild(sph);
-                this.myMesh.position.x = raio;
+                this.myMesh.position.x = 0;
 
                 this.root = new BABYLON.Mesh("root", scene);
                 this.root.addChild(this.myMesh);
             }
 
+            
 
 
 
             rotacao() {
-                this.myMesh.rotation.x += 0.01;
+                this.myMesh.position.x += 0.01;
             }
 
         }
