@@ -122,28 +122,27 @@
             camera.attachControl(canvas, true);
             camera.lockedTarget = myMesa;
 
-            /*
-            var bricksMaterial = new BABYLON.StandardMaterial("brick", scene);
-            bricksMaterial.diffuseTexture = new BABYLON.Texture("textures/bricks.jpg", scene);
-            bricksMaterial.diffuseTexture.uScale = 8;
-            bricksMaterial.diffuseTexture.vScale = 0.5;
+            var LateralMaterial = new BABYLON.StandardMaterial("brick", scene);
+            LateralMaterial.diffuseTexture = new BABYLON.Texture("textures/madeira.jpg", scene);
+            LateralMaterial.diffuseTexture.uScale = 8;
+            LateralMaterial.diffuseTexture.vScale = 0.5;
 
-            var wallLeft = BABYLON.MeshBuilder.CreateBox("wall", { width: 0.5, depth: 8, height: 0.5 }, scene);
-            wallLeft.material = bricksMaterial;
-            wallLeft.position.x = 4.25;
+            var MuroEsq = BABYLON.MeshBuilder.CreateBox("wall", { width: 0.5, depth: 6.10, height: 0.5 }, scene);
+            MuroEsq.material = LateralMaterial;
+            MuroEsq.position.x = 7.40;
 
-            var wallRight = wallLeft.clone();
-            wallRight.position.x = -4.25;
+            var MuroDir = MuroEsq.clone();
+            MuroDir.position.x = -7.40;
 
-            var wallTop = wallLeft.clone();
-            wallTop.position.x = 0;
-            wallTop.rotation.y = Math.PI / 2;
-            wallTop.position.z = -4.25;
+            var MuroAcima = BABYLON.MeshBuilder.CreateBox("wall", { width: 0.5, depth: 14, height: 0.5 }, scene);
+            MuroAcima.material = LateralMaterial;
+            MuroAcima.position.x = 0;
+            MuroAcima.rotation.y = Math.PI / 2;
+            MuroAcima.position.z = -3.25;
 
-            var wallTop = wallTop.clone();
-            wallTop.position.z = 4.25;
-
-            */
+            var MuroAcima = MuroAcima.clone();
+            MuroAcima.position.z = 3.25;
+            
         }
 
         function createLights() {
@@ -168,9 +167,9 @@
                 this.root.addChild(this.myMesh);
             }
 
-            
-
-
+            removeMesh() {
+                this.myMesh.dispose();
+            }
 
             rotacao() {
                 this.myMesh.position.x += 0.01;
