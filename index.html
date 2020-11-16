@@ -71,12 +71,19 @@
             ANGLE_315
         ];
 
+        //Elementos
+        var um;
+        var dois;
+        var tres;
+        var quatro;
+        var cinco;
+
         const colors = [
             new BABYLON.Color3(1, 0, 0),
             new BABYLON.Color3(0, 1, 0),
             new BABYLON.Color3(0, 0, 1),
             new BABYLON.Color3(1, 1, 0),
-            new BABYLON.Color3(1, 0, 0),
+            new BABYLON.Color3(1, 1, 1),
             new BABYLON.Color3(0, 1, 0),
             new BABYLON.Color3(0, 0, 1),
             new BABYLON.Color3(1, 1, 0)
@@ -87,14 +94,39 @@
             // Create the scene space
             var scene = new BABYLON.Scene(engine);       
 
-          //  mesh2 = new MyMesh(colors[0]);
-           // mesh2.root.position.x = 0;
-           // meshes.push(mesh2);
 
            createLights();
            createMesaBilhar();
 
-          
+           scene.onKeyboardObservable.add((kbInfo) => {
+                switch (kbInfo.type) {
+                    case BABYLON.KeyboardEventTypes.KEYDOWN:
+                        switch (kbInfo.event.key) {
+                            case "1":
+                            um = createCamadaUm();
+                            break;
+
+                            case "2":
+                            dois =createCamadaDois();
+                            break;
+
+                            case "3":
+                            tres = createCamadaTres();
+                            break;
+
+                            case "4":
+                            quatro = createCamadaQuatro();
+                            break;
+
+                            case "5":
+                            cinco = createCamadaCinco();
+                            break;
+
+                        }
+                    }
+
+                });
+                      
             //Animations
             var renderLoop = function () {
                 scene.render();
@@ -109,6 +141,136 @@
             return scene;
 
         }
+
+        function createCamadaUm() {
+
+        
+            mesh = new MyMesh(colors[0]);
+            meshes.push(mesh);
+
+            var objeto = [];
+            objeto.push(mesh);
+
+            return objeto;
+
+        }
+
+        function createCamadaDois() {
+
+        
+        var mesh = new MyMesh(colors[2]);
+        mesh.root.position.x = -0.75;
+        mesh.root.position.z = 0.37;
+        meshes.push(mesh);
+
+        var mesh1 = new MyMesh(colors[2]);
+        mesh1.root.position.x = -0.75;
+        mesh1.root.position.z = -0.37;
+        meshes.push(mesh1);
+
+        var objeto = [];
+        objeto.push(mesh);
+        objeto.push(mesh1);
+
+        return objeto;
+
+        }
+
+        function createCamadaTres() {
+        
+        var mesh = new MyMesh(colors[3]);
+        mesh.root.position.x = -1.5;
+        meshes.push(mesh);
+
+        var mesh1 = new MyMesh(colors[3]);
+        mesh1.root.position.x = -1.5;
+        mesh1.root.position.z = 0.75;
+        meshes.push(mesh1);
+
+        var mesh2 = new MyMesh(colors[3]);
+        mesh2.root.position.x = -1.5;
+        mesh2.root.position.z = -0.75;
+        meshes.push(mesh2);
+
+        var objeto = [];
+        objeto.push(mesh);
+        objeto.push(mesh1);
+        objeto.push(mesh2);
+
+        return objeto;
+
+        }
+
+
+        function createCamadaQuatro() {
+        
+        var mesh = new MyMesh(colors[4]);
+        mesh.root.position.x = -2.25;
+        mesh.root.position.z = 0.37;
+        meshes.push(mesh);
+
+        var mesh1 = new MyMesh(colors[4]);
+        mesh1.root.position.x = -2.25;
+        mesh1.root.position.z = -0.37;
+        meshes.push(mesh1);
+
+        var mesh2 = new MyMesh(colors[4]);
+        mesh2.root.position.x = -2.25;
+        mesh2.root.position.z = 1.12;
+        meshes.push(mesh2);
+
+        var mesh3 = new MyMesh(colors[4]);
+        mesh3.root.position.x = -2.25;
+        mesh3.root.position.z = -1.12;
+        meshes.push(mesh3);
+
+        var objeto = [];
+        objeto.push(mesh);
+        objeto.push(mesh1);
+        objeto.push(mesh2);
+        objeto.push(mesh3);
+
+        return objeto;
+
+        }
+
+        function createCamadaCinco() {
+        
+        var mesh = new MyMesh(colors[5]);
+        mesh.root.position.x = -3;
+        meshes.push(mesh);
+
+        var mesh1 = new MyMesh(colors[5]);
+        mesh1.root.position.x = -3;
+        mesh1.root.position.z = 0.75;
+        meshes.push(mesh1);
+
+        var mesh2 = new MyMesh(colors[5]);
+        mesh2.root.position.x = -3;
+        mesh2.root.position.z = -0.75;
+        meshes.push(mesh2);
+
+        var mesh3 = new MyMesh(colors[5]);
+        mesh3.root.position.x = -3;
+        mesh3.root.position.z = 1.5;
+        meshes.push(mesh3);
+
+        var mesh4 = new MyMesh(colors[5]);
+        mesh4.root.position.x = -3;
+        mesh4.root.position.z = -1.5;
+        meshes.push(mesh4);
+
+        var objeto = [];
+        objeto.push(mesh);
+        objeto.push(mesh1);
+        objeto.push(mesh2);
+        objeto.push(mesh3);
+        objeto.push(mesh4);
+
+        return objeto;
+
+        }
+
 
         function createMesaBilhar() {
             var MesaMaterial = new BABYLON.StandardMaterial("floor", scene);
@@ -145,6 +307,7 @@
             
         }
 
+
         function createLights() {
             var light1 = new BABYLON.PointLight("light", new BABYLON.Vector3(18, 4, 0), scene);
             var light2 = new BABYLON.PointLight("light", new BABYLON.Vector3(-18, 4, 0), scene);
@@ -156,12 +319,13 @@
                 var material = new BABYLON.StandardMaterial("myMaterial", scene);
                 material.diffuseColor = color;
 
-                var sph = BABYLON.MeshBuilder.CreateSphere("sph", {}, scene);
+                var sph = BABYLON.MeshBuilder.CreateSphere("sph", {diameter: 0.75}, scene);
                 sph.material = material;
                 
                 this.myMesh = new BABYLON.Mesh("mesh", scene);
                 this.myMesh.addChild(sph);
                 this.myMesh.position.x = 0;
+                this.myMesh.position.y = 0.25;
 
                 this.root = new BABYLON.Mesh("root", scene);
                 this.root.addChild(this.myMesh);
