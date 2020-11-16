@@ -103,22 +103,63 @@
                     case BABYLON.KeyboardEventTypes.KEYDOWN:
                         switch (kbInfo.event.key) {
                             case "1":
+                            if(um != null)
+                            {
+                                for(i=0;i<1;i++)
+                                {
+                                    um[i].removeMesh();
+                                }
+                            }
                             um = createCamadaUm();
                             break;
 
                             case "2":
+
+                            if(dois != null)
+                            {
+                                for(i=0;i<2;i++)
+                                {
+                                    dois[i].removeMesh();
+                                }
+                            }
+
                             dois =createCamadaDois();
                             break;
 
                             case "3":
+
+                            if(tres != null)
+                            {
+                                for(i=0;i<3;i++)
+                                {
+                                    tres[i].removeMesh();
+                                }
+                            }
+                            
+
                             tres = createCamadaTres();
                             break;
 
                             case "4":
+
+                            if(quatro != null)
+                            {
+                                for(i=0;i<4;i++)
+                                {
+                                    quatro[i].removeMesh();
+                                }
+                            }
                             quatro = createCamadaQuatro();
                             break;
 
                             case "5":
+                            if(cinco != null)
+                            {
+                                for(i=0;i<5;i++)
+                                {
+                                    cinco[i].removeMesh();
+                                }
+                            }
                             cinco = createCamadaCinco();
                             break;
 
@@ -144,7 +185,6 @@
 
         function createCamadaUm() {
 
-        
             mesh = new MyMesh(colors[0]);
             meshes.push(mesh);
 
