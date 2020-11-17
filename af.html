@@ -23,6 +23,7 @@
     <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
 
+
     <style>
         html,
         body {
@@ -49,29 +50,10 @@
         var engine = null;
         var scene = null;
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        var player, clickX, clickZ, first;
         var meshes = [];
 
-        const ANGLE_0 = 0;
-        const ANGLE_45 = Math.PI / 4;
-        const ANGLE_90 = ANGLE_45 + ANGLE_45;;
-        const ANGLE_135 = ANGLE_90 + ANGLE_45;
-        const ANGLE_180 = ANGLE_135 + ANGLE_45;
-        const ANGLE_225 = ANGLE_180 + ANGLE_45;
-        const ANGLE_270 = ANGLE_225 + ANGLE_45;;
-        const ANGLE_315 = ANGLE_270 + ANGLE_45;;
-
-      const angles = [
-            ANGLE_0,
-            ANGLE_45,
-            ANGLE_90,
-            ANGLE_135,
-            ANGLE_180,
-            ANGLE_225,
-            ANGLE_270,
-            ANGLE_315
-        ];
-
-        //Elementos
+         //Elementos
         var um;
         var dois;
         var tres;
@@ -90,14 +72,15 @@
         ];
 
         var createScene = function () {
-
             // Create the scene space
-            var scene = new BABYLON.Scene(engine);       
+            scene = new BABYLON.Scene(engine);
+            createLights();
+            createFloorAndCamera();
+            createPlayer();
+            managerEvents();
+            animation();
 
-
-           createLights();
-           createMesaBilhar();
-
+           
            scene.onKeyboardObservable.add((kbInfo) => {
                 switch (kbInfo.type) {
                     case BABYLON.KeyboardEventTypes.KEYDOWN:
@@ -167,152 +150,63 @@
                     }
 
                 });
-                      
-            //Animations
+
+            return scene;
+        }
+
+       
+        function animation() {
+            var incX = 0, incZ = 0;
+
             var renderLoop = function () {
                 scene.render();
 
-                 //  meshes.forEach(function (mesh) {
-                 //  mesh.rotacao();
-              //  });
+                if (player.position.x > clickX) {
+                    incX = -0.01;
+                }
+                else {
+                    player.position.x > clickX
+                    incX = 0.01;
+                }
+
+                if (player.position.z > clickZ) {
+                    incZ = -0.01;
+                }
+                else {
+                    incZ = 0.01;
+                }
+
+                if(first==1)
+                {
+                    player.position.x += incX;
+                    player.position.z += incZ;
+                }
+                
+
+
             };
             engine.runRenderLoop(renderLoop);
-
-
-            return scene;
-
         }
 
-        function createCamadaUm() {
+       
 
-            mesh = new MyMesh(colors[0]);
-            meshes.push(mesh);
-
-            var objeto = [];
-            objeto.push(mesh);
-
-            return objeto;
-
+        function managerEvents() {
+            scene.onPointerDown = function (evt, pickResult) {
+            
+                if (pickResult.hit && pickResult.pickedMesh.name == 'myGround') {
+                    if (pickResult.pickedPoint.x > 0.59 && pickResult.pickedPoint.x < 6.40 &&
+                        pickResult.pickedPoint.z > -2.57 && pickResult.pickedPoint.z < 2.57) { 
+                        console.log(clickX = pickResult.pickedPoint.x);
+                        console.log(clickZ = pickResult.pickedPoint.z);
+                        first = 1;
+                    }
+                 } 
+             
+            };
         }
 
-        function createCamadaDois() {
-
+        function createFloorAndCamera() {
         
-        var mesh = new MyMesh(colors[2]);
-        mesh.root.position.x = -0.75;
-        mesh.root.position.z = 0.37;
-        meshes.push(mesh);
-
-        var mesh1 = new MyMesh(colors[2]);
-        mesh1.root.position.x = -0.75;
-        mesh1.root.position.z = -0.37;
-        meshes.push(mesh1);
-
-        var objeto = [];
-        objeto.push(mesh);
-        objeto.push(mesh1);
-
-        return objeto;
-
-        }
-
-        function createCamadaTres() {
-        
-        var mesh = new MyMesh(colors[3]);
-        mesh.root.position.x = -1.5;
-        meshes.push(mesh);
-
-        var mesh1 = new MyMesh(colors[3]);
-        mesh1.root.position.x = -1.5;
-        mesh1.root.position.z = 0.75;
-        meshes.push(mesh1);
-
-        var mesh2 = new MyMesh(colors[3]);
-        mesh2.root.position.x = -1.5;
-        mesh2.root.position.z = -0.75;
-        meshes.push(mesh2);
-
-        var objeto = [];
-        objeto.push(mesh);
-        objeto.push(mesh1);
-        objeto.push(mesh2);
-
-        return objeto;
-
-        }
-
-
-        function createCamadaQuatro() {
-        
-        var mesh = new MyMesh(colors[4]);
-        mesh.root.position.x = -2.25;
-        mesh.root.position.z = 0.37;
-        meshes.push(mesh);
-
-        var mesh1 = new MyMesh(colors[4]);
-        mesh1.root.position.x = -2.25;
-        mesh1.root.position.z = -0.37;
-        meshes.push(mesh1);
-
-        var mesh2 = new MyMesh(colors[4]);
-        mesh2.root.position.x = -2.25;
-        mesh2.root.position.z = 1.12;
-        meshes.push(mesh2);
-
-        var mesh3 = new MyMesh(colors[4]);
-        mesh3.root.position.x = -2.25;
-        mesh3.root.position.z = -1.12;
-        meshes.push(mesh3);
-
-        var objeto = [];
-        objeto.push(mesh);
-        objeto.push(mesh1);
-        objeto.push(mesh2);
-        objeto.push(mesh3);
-
-        return objeto;
-
-        }
-
-        function createCamadaCinco() {
-        
-        var mesh = new MyMesh(colors[5]);
-        mesh.root.position.x = -3;
-        meshes.push(mesh);
-
-        var mesh1 = new MyMesh(colors[5]);
-        mesh1.root.position.x = -3;
-        mesh1.root.position.z = 0.75;
-        meshes.push(mesh1);
-
-        var mesh2 = new MyMesh(colors[5]);
-        mesh2.root.position.x = -3;
-        mesh2.root.position.z = -0.75;
-        meshes.push(mesh2);
-
-        var mesh3 = new MyMesh(colors[5]);
-        mesh3.root.position.x = -3;
-        mesh3.root.position.z = 1.5;
-        meshes.push(mesh3);
-
-        var mesh4 = new MyMesh(colors[5]);
-        mesh4.root.position.x = -3;
-        mesh4.root.position.z = -1.5;
-        meshes.push(mesh4);
-
-        var objeto = [];
-        objeto.push(mesh);
-        objeto.push(mesh1);
-        objeto.push(mesh2);
-        objeto.push(mesh3);
-        objeto.push(mesh4);
-
-        return objeto;
-
-        }
-
-
-        function createMesaBilhar() {
             var MesaMaterial = new BABYLON.StandardMaterial("floor", scene);
             MesaMaterial.diffuseTexture = new BABYLON.Texture("textures/solo.jpg", scene);
          
@@ -344,14 +238,153 @@
 
             var MuroAcima = MuroAcima.clone();
             MuroAcima.position.z = 3.25;
-            
         }
+
+        function createPlayer() {
+            var principalMaterial = new BABYLON.StandardMaterial("PrincipalMaterial", scene);
+            principalMaterial.diffuseColor = colors[4];
+
+            player = BABYLON.MeshBuilder.CreateSphere("mySphere", { diameter: 0.75 }, scene);
+            player.material = principalMaterial;
+            player.position.y = 0.25;
+            player.position.x = 4;
+        }
+
 
 
         function createLights() {
             var light1 = new BABYLON.PointLight("light", new BABYLON.Vector3(18, 4, 0), scene);
             var light2 = new BABYLON.PointLight("light", new BABYLON.Vector3(-18, 4, 0), scene);
         }
+
+        
+        function createCamadaUm() {
+
+                mesh = new MyMesh(colors[0]);
+                meshes.push(mesh);
+
+                var objeto = [];
+                objeto.push(mesh);
+
+                return objeto;
+
+                }
+
+                function createCamadaDois() {
+
+
+                var mesh = new MyMesh(colors[2]);
+                mesh.root.position.x = -0.75;
+                mesh.root.position.z = 0.37;
+                meshes.push(mesh);
+
+                var mesh1 = new MyMesh(colors[2]);
+                mesh1.root.position.x = -0.75;
+                mesh1.root.position.z = -0.37;
+                meshes.push(mesh1);
+
+                var objeto = [];
+                objeto.push(mesh);
+                objeto.push(mesh1);
+
+                return objeto;
+
+                }
+
+                function createCamadaTres() {
+
+                var mesh = new MyMesh(colors[3]);
+                mesh.root.position.x = -1.5;
+                meshes.push(mesh);
+
+                var mesh1 = new MyMesh(colors[3]);
+                mesh1.root.position.x = -1.5;
+                mesh1.root.position.z = 0.75;
+                meshes.push(mesh1);
+
+                var mesh2 = new MyMesh(colors[3]);
+                mesh2.root.position.x = -1.5;
+                mesh2.root.position.z = -0.75;
+                meshes.push(mesh2);
+
+                var objeto = [];
+                objeto.push(mesh);
+                objeto.push(mesh1);
+                objeto.push(mesh2);
+
+                return objeto;
+
+                }
+
+
+                function createCamadaQuatro() {
+
+                var mesh = new MyMesh(colors[4]);
+                mesh.root.position.x = -2.25;
+                mesh.root.position.z = 0.37;
+                meshes.push(mesh);
+
+                var mesh1 = new MyMesh(colors[4]);
+                mesh1.root.position.x = -2.25;
+                mesh1.root.position.z = -0.37;
+                meshes.push(mesh1);
+
+                var mesh2 = new MyMesh(colors[4]);
+                mesh2.root.position.x = -2.25;
+                mesh2.root.position.z = 1.12;
+                meshes.push(mesh2);
+
+                var mesh3 = new MyMesh(colors[4]);
+                mesh3.root.position.x = -2.25;
+                mesh3.root.position.z = -1.12;
+                meshes.push(mesh3);
+
+                var objeto = [];
+                objeto.push(mesh);
+                objeto.push(mesh1);
+                objeto.push(mesh2);
+                objeto.push(mesh3);
+
+                return objeto;
+
+                }
+
+                function createCamadaCinco() {
+
+                var mesh = new MyMesh(colors[5]);
+                mesh.root.position.x = -3;
+                meshes.push(mesh);
+
+                var mesh1 = new MyMesh(colors[5]);
+                mesh1.root.position.x = -3;
+                mesh1.root.position.z = 0.75;
+                meshes.push(mesh1);
+
+                var mesh2 = new MyMesh(colors[5]);
+                mesh2.root.position.x = -3;
+                mesh2.root.position.z = -0.75;
+                meshes.push(mesh2);
+
+                var mesh3 = new MyMesh(colors[5]);
+                mesh3.root.position.x = -3;
+                mesh3.root.position.z = 1.5;
+                meshes.push(mesh3);
+
+                var mesh4 = new MyMesh(colors[5]);
+                mesh4.root.position.x = -3;
+                mesh4.root.position.z = -1.5;
+                meshes.push(mesh4);
+
+                var objeto = [];
+                objeto.push(mesh);
+                objeto.push(mesh1);
+                objeto.push(mesh2);
+                objeto.push(mesh3);
+                objeto.push(mesh4);
+
+                return objeto;
+
+                }
 
 
         class MyMesh {
