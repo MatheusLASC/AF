@@ -52,6 +52,7 @@
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
         var player, clickX, clickZ, first;
         var meshes = [];
+        var escolha;
 
          //Elementos
         var um;
@@ -59,13 +60,15 @@
         var tres;
         var quatro;
         var cinco;
+        var verifica;
+        var desativa=false;
 
         const colors = [
             new BABYLON.Color3(1, 0, 0),
-            new BABYLON.Color3(0, 1, 0),
+            new BABYLON.Color3(1, 1, 1),
             new BABYLON.Color3(0, 0, 1),
             new BABYLON.Color3(1, 1, 0),
-            new BABYLON.Color3(1, 1, 1),
+            new BABYLON.Color3(0, 0, 0),
             new BABYLON.Color3(0, 1, 0),
             new BABYLON.Color3(0, 0, 1),
             new BABYLON.Color3(1, 1, 0)
@@ -74,82 +77,105 @@
         var createScene = function () {
             // Create the scene space
             scene = new BABYLON.Scene(engine);
+            
             createLights();
             createFloorAndCamera();
             createPlayer();
             managerEvents();
             animation();
+            movimenta();
+            createNome();
+          
 
-           
            scene.onKeyboardObservable.add((kbInfo) => {
                 switch (kbInfo.type) {
                     case BABYLON.KeyboardEventTypes.KEYDOWN:
                         switch (kbInfo.event.key) {
                             case "1":
-                            if(um != null)
-                            {
-                                for(i=0;i<1;i++)
-                                {
-                                    um[i].removeMesh();
-                                }
+                            if (desativa == false)
+                            { 
+                                um = createCamadaUm();
+                                escolha = 1;
                             }
-                            um = createCamadaUm();
+
                             break;
 
                             case "2":
 
-                            if(dois != null)
+                            if(desativa == false)
                             {
-                                for(i=0;i<2;i++)
+                                if(escolha == 1)
                                 {
-                                    dois[i].removeMesh();
+                                    dois =createCamadaDois();
+                                    escolha = 2;
                                 }
+                                
                             }
-
-                            dois =createCamadaDois();
                             break;
 
                             case "3":
 
-                            if(tres != null)
+                            if(desativa == false)
                             {
-                                for(i=0;i<3;i++)
-                                {
-                                    tres[i].removeMesh();
-                                }
+                               if(escolha == 2)
+                               {
+                                tres = createCamadaTres();
+                                escolha = 3;
+                               }
+                              
                             }
                             
-
-                            tres = createCamadaTres();
                             break;
 
                             case "4":
 
-                            if(quatro != null)
+                            if(desativa == false)
                             {
-                                for(i=0;i<4;i++)
+                                if (escolha == 3)
                                 {
-                                    quatro[i].removeMesh();
+                                    quatro = createCamadaQuatro();
+                                    escolha = 4;
                                 }
+                                
                             }
-                            quatro = createCamadaQuatro();
+
                             break;
 
                             case "5":
-                            if(cinco != null)
+                            if(desativa == false)
                             {
-                                for(i=0;i<5;i++)
-                                {
-                                    cinco[i].removeMesh();
-                                }
+                              if(escolha == 4)
+                              {
+                                cinco = createCamadaCinco();
+                                escolha = 5;
+                              }
+                                
                             }
-                            cinco = createCamadaCinco();
+                    
                             break;
+                           case "h":
+                         
+                                var advancedTexture1 = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Passo 1: Escolha a quantidade bolas da mesa de bilhar a serem acertadas, para isso clique nos números de 1 a 5.  Passo 2: Tente acertar as outras bolas com a bola branca clicando o mais próximo da bola vermelha.");
+                                button1.width = "150px"
+                                button1.height = "280px";
+                                button1.color = "black";
+                                button1.cornerRadius = 10;
+                                button1.background = "orange";
+                                button1.top = 0;
+                                button1.left = -600;
+                                advancedTexture1.addControl(button1);
+                                //advancedTexture1.dispose não funcinou neste projeto, por não se remove da tela o menu
+                           break;
 
+                           default:
+                           break;
                         }
                     }
 
                 });
+        
+            
 
             return scene;
         }
@@ -157,12 +183,20 @@
        
         function animation() {
             var incX = 0, incZ = 0;
-
+         
             var renderLoop = function () {
                 scene.render();
-
-                if (player.position.x > clickX) {
-                    incX = -0.01;
+                if((um!=null) || (dois!=null) || (tres!=null) || (quatro!=null) || (cinco!=null))
+                {
+                    //Verificação para controlar a ativação do bilhar e a desativação do
+                 if(player.position.x <0.80 && (player.position.z< 0.51 && player.position.z >-0.51))
+                        {
+                            verifica = 1;
+                            desativa = true;
+                        } 
+                //posição da bola branca
+                 if (player.position.x > clickX) {
+                  incX = -0.01;
                 }
                 else {
                     player.position.x > clickX
@@ -181,11 +215,28 @@
                     player.position.x += incX;
                     player.position.z += incZ;
                 }
-                
 
-
+                }
+             
+            
             };
+            
             engine.runRenderLoop(renderLoop);
+        }
+
+
+        function movimenta(){
+        var renderMove = function () {
+                scene.render();
+                if(verifica == 1)
+                {
+                    meshes.forEach(function (mesh) {
+                    mesh.rotacao(escolha);
+                });
+                }
+               
+            };
+            engine.runRenderLoop(renderMove);
         }
 
        
@@ -195,10 +246,12 @@
             
                 if (pickResult.hit && pickResult.pickedMesh.name == 'myGround') {
                     if (pickResult.pickedPoint.x > 0.59 && pickResult.pickedPoint.x < 6.40 &&
-                        pickResult.pickedPoint.z > -2.57 && pickResult.pickedPoint.z < 2.57) { 
+                        pickResult.pickedPoint.z > -2.57 && pickResult.pickedPoint.z < 2.57) {
+
                         console.log(clickX = pickResult.pickedPoint.x);
                         console.log(clickZ = pickResult.pickedPoint.z);
                         first = 1;
+                       
                     }
                  } 
              
@@ -217,6 +270,8 @@
             var camera = new BABYLON.FreeCamera("FreeCam", new BABYLON.Vector3(0, 12, 0), scene);
             camera.attachControl(canvas, true);
             camera.lockedTarget = myMesa;
+            camera.lowerRadiusLimit = camera.radius; // trava scroll da câmera
+            camera.upperRadiusLimit = camera.radius; // trava scroll da câmera
 
             var LateralMaterial = new BABYLON.StandardMaterial("brick", scene);
             LateralMaterial.diffuseTexture = new BABYLON.Texture("textures/madeira.jpg", scene);
@@ -242,14 +297,28 @@
 
         function createPlayer() {
             var principalMaterial = new BABYLON.StandardMaterial("PrincipalMaterial", scene);
-            principalMaterial.diffuseColor = colors[4];
+            principalMaterial.diffuseColor = colors[1];
 
             player = BABYLON.MeshBuilder.CreateSphere("mySphere", { diameter: 0.75 }, scene);
             player.material = principalMaterial;
             player.position.y = 0.25;
             player.position.x = 4;
         }
+ 
 
+        function createNome()
+        {
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            var button2 = BABYLON.GUI.Button.CreateSimpleButton("but2", "Matheus Lima de Almeida (180018)");
+            button2.width = "250px"
+            button2.height = "50px";
+            button2.color = "black";
+            button2.cornerRadius = 10;
+            button2.background = "orange";
+            button2.top = -260;
+            button2.left = 0;
+            advancedTexture.addControl(button2);
+        }
 
 
         function createLights() {
@@ -408,8 +477,52 @@
                 this.myMesh.dispose();
             }
 
-            rotacao() {
-                this.myMesh.position.x += 0.01;
+            rotacao(linha) {
+            
+                if (linha >= 5)
+                {
+                    if(this.myMesh.position.x >= - 3.4)
+                    {
+                        this.myMesh.position.x -= 0.01;
+                    }
+                }
+                else if (linha >= 4)
+                {
+                    if(this.myMesh.position.x >= -4.15)
+                    {
+                        this.myMesh.position.x -= 0.01;
+                    }
+                }
+                
+                else if (linha >= 3)
+                {
+                    if(this.myMesh.position.x >= -4.9)
+                    {
+                        this.myMesh.position.x -= 0.01;
+                    }
+                }
+                else if (linha >= 2)
+                {
+                    if(this.myMesh.position.x >= -5.65)
+                    {
+                        this.myMesh.position.x -= 0.01;
+                    }
+                }
+
+                else if (linha >= 1)
+                {
+                    if(this.myMesh.position.x >= -6.4)
+                    {
+                        this.myMesh.position.x -= 0.01;
+                    }
+                }
+                
+                
+               
+                
+                
+
+                
             }
 
         }
